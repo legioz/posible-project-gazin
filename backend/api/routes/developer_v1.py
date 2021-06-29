@@ -34,6 +34,8 @@ async def create_developer(data: DeveloperIn, user=Depends(get_current_user)):
     """
     try:
         args = [data.name, data.sex, data.hobby, data.birthdate]
+        if data.sex not in ['M', 'F']:
+            raise Exception()
         with Connection() as db:
             sql = '''
                 INSERT INTO developer
@@ -122,6 +124,8 @@ async def update_developer(id: int, data: DeveloperIn, user=Depends(get_current_
             data.birthdate, 
             id
         ]
+        if data.sex not in ['M', 'F']:
+            raise Exception()
         with Connection() as db:
             sql_check = '''
                 SELECT *
