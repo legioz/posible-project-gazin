@@ -35,6 +35,9 @@ MARIADB_HOST=db
 MARIADB_DB=db
 
 ```
+##### Testes Unitários com Pytest
+
+![image](https://user-images.githubusercontent.com/40257388/123841908-84fa3580-d8e6-11eb-85f2-ff690e55256e.png)
 
 ----
 # Exercicio Proposto    
