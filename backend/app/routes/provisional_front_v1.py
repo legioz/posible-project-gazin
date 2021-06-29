@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Request, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-import requests
 
 router = APIRouter()
 templates = Jinja2Templates(directory='app/templates')
@@ -21,10 +20,3 @@ async def login(request: Request):
 @router.get('/create', response_class=HTMLResponse)
 async def create(request: Request, update: int=None):
     return templates.TemplateResponse('create.html', {'request': request, 'update': update})
-
-
-# @router.get('/update', response_class=HTMLResponse)
-# async def update(request: Request):
-#     return templates.TemplateResponse('update.html', {'request': request})
-
-
