@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>API!</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <script>
+     function deleteDevRow(el) {
+            btnDelId = el.id
+            fetch('http://localhost/api/developers/' + btnDelId, {
+                    method: 'delete',
+                    headers: new Headers({
+                        'Authorization': 'Bearer ' + document.cookie.split(';').find(row => row.startsWith(
+                            'access_token=')).split('=')[1],
+                        'Content-Type': 'application/json'
+                    }),
+                })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (json) {
+                    document.location.reload();
+                });
+        }
+    </script>
+</head>
+
+<body>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
+                data-target="navbarBasicExample">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+
+        <div id="navbarBasicExample" class="navbar-menu">
+            <div class="navbar-start">
+
+                <a class="navbar-item" href="/docs">
+                    API Documentation
+                </a>
+
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link">
+                        More
+                    </a>
+
+                    <div class="navbar-dropdown">
+                        <a class="navbar-item" href="https://www.linkedin.com/in/luizvbll/">
+                            LinkedIn
+                        </a>
+                        <a class="navbar-item" href="https://github.com/luizfelipevbll">
+                            Github
+                        </a>
+                        <a class="navbar-item" href="https://vbll.dev">
+                            Contact
+                        </a>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a autofocus id='login' class="button is-light" href="{{ url_for('login') }}">
+                            Log in
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <section class="section">
+        <div class="container">
+            <h1 class="title">
+                API Luiz
+            </h1>
+            <p class="subtitle">
+                Developers List
+            </p>
+        </div>
+    </section>
+    <br>
+    <section id="table-section">
+            <div class="container mt-4">
+                <div class="columns is-centered">
+                    <table class="table is-hoverable" id="table">
+                        <tr class="is-uppercase has-text-centered">
+                            <th>id</th>
+                            <th>name</th>
+                            <th>sex</th>
+                            <th>hobby</th>
+                            <th>birthdate</th>
+                            <th>inserted_on</th>
+                            <th>updated_on</th>
+                            <th>action</th>
+                        </tr>
+                    </table>
+                </div>
+                <div class="columns is-centered">
+                    <a class="button is-success mt-5 is-rounded" href="{{ url_for('create') }}">Create</a>
+                </div>
+            </div>
+    </section>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+            if ($navbarBurgers.length > 0) {
+
+                $navbarBurgers.forEach(el => {
+                    el.addEventListener('click', () => {
+
+                        const target = el.dataset.target;
+                        const $target = document.getElementById(target);
+
+                        el.classList.toggle('is-active');
+                        $target.classList.toggle('is-active');
+
+                    });
+                });
+            }
+
+        });
+
+        token = document.cookie.split(';').find(row => row.startsWith('access_token=')).split('=')[1]
+        fetch('http://localhost/api/developers', {
+                method: 'GET',
+                headers: new Headers({
+                    'Authorization': 'Bearer ' + document.cookie.split(';').find(row => row.startsWith(
+                        'access_token=')).split('=')[1],
+                    'Content-Type': 'application/json'
+                }),
+            })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (json) {
+                dev_list = document.getElementById('');
+                json.forEach(item => {
+                    let row = table.insertRow();
+                    let id = row.insertCell();
+                    id.innerHTML = item.id;
+                    let name = row.insertCell();
+                    name.innerHTML = item.name;
+                    let sex = row.insertCell();
+                    sex.innerHTML = item.sex;
+                    let hobby = row.insertCell();
+                    hobby.innerHTML = item.hobby;
+                    let birthdate = row.insertCell();
+                    birthdate.innerHTML = item.birthdate;
+                    let inserted_on = row.insertCell();
+                    inserted_on.innerHTML = item.inserted_on;
+                    let updated_on = row.insertCell();
+                    updated_on.innerHTML = item.updated_on;
+                    let aTag = document.createElement("a");
+                    aTag.setAttribute('href', "{{url_for('create')}}/?update=" + item.id);
+                    aTag.setAttribute('class', 'button is-warning is-rounded is-small')
+                    aTag.innerText = "Update"
+                    let btnDel = document.createElement("button");
+                    btnDel.setAttribute('id', item.id);
+                    btnDel.setAttribute('onclick', 'deleteDevRow(this)');
+                    btnDel.setAttribute('class', 'ml-1 button is-danger is-rounded is-small');
+                    btnDel.innerText = "Delete";
+                    let action = row.insertCell();
+                    action.appendChild(aTag);
+                    action.appendChild(btnDel)
+                });
+            });
+
+    </script>
+    {% if auth_token %}
+    <script>
+
+    </script>
+    {% endif %}
+
+</body>
+
+</html>

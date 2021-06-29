@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>API Luiz</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+</head>
+
+<body>
+
+    <section class="hero is-fullheight">
+        <div class="hero-body">
+            <div class="container">
+                <div class="columns is-centered">
+                    <div class="column is-5-tablet is-4-desktop is-3-widescreen">
+                        <form id="form" class="box">
+                            <div>
+                                {% if update %}
+                                <h1 class="title is-3">Update Developer</h1>
+                                    {% set method = 'put' %}
+                                    {%  set url_form = 'http://localhost/api/developers/' ~ update %}
+                                {% else %}
+                                <h1 class="title is-3">Create Developer</h1>
+                                    {% set method = 'post' %}
+                                    {% set url_form = 'http://localhost/api/developers' %}
+                                {% endif %}
+                            </div>
+                            <hr>
+                            <div class="field">
+                                <label class="label">Name</label>
+                                <div class="control">
+                                    <input id="name" name="name" class="input" type="text" required>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">Sex</label>
+                                <div class="control">
+                                    <label class="radio">
+                                        <input type="radio" name="sex" checked value="M">
+                                        Male
+                                    </label>
+                                    <label class="radio">
+                                        <input type="radio" name="sex" value="F">
+                                        Female
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">Hobby</label>
+                                <div class="control">
+                                    <textarea id="hobby" name="hobby" class="textarea" type="text" required></textarea>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">Birthdate</label>
+                                <div class="control">
+                                    <input id="birthdate" name="birthdate" class="input" type="date" required>
+                                </div>
+                            </div>
+                            <a class="button is-info" href="/">Cancel</a>
+                            <button class="button is-success" onclick="sendForm()">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <script>
+        {% if update %}
+        fetch('http://localhost/api/developers/{{ update }}', {
+                method: 'get',
+                headers: new Headers({
+                    'Authorization': 'Bearer ' + document.cookie.split(';').find(row => row.startsWith(
+                        'access_token=')).split('=')[1],
+                    'Content-Type': 'application/json'
+                }),
+            })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (json) {
+                form_up = document.getElementById('form');
+                form_up['name'].value = json['name'];
+                form_up['hobby'].value = json['hobby'];
+                form_up['birthdate'].value = json['birthdate'];
+                form_up['sex'].value = json['sex'];
+            });
+        {% endif %}
+        function sendForm() {
+            form = new FormData(document.getElementById('form'))
+            fetch("{{url_form}}", {
+                    method: '{{ method }}',
+                    headers: new Headers({
+                        'Authorization': 'Bearer ' + document.cookie.split(';').find(row => row.startsWith(
+                            'access_token=')).split('=')[1],
+                        'Content-Type': 'application/json'
+                    }),
+                    body: JSON.stringify(Object.fromEntries(form))
+                })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (json) {
+                    window.location.href = "/";
+                });
+        }
+    </script>
+</body>
+
+</html>
