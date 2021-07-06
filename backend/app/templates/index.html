@@ -105,7 +105,7 @@
                     </table>
                 </div>
                 <div class="columns is-centered">
-                    <a class="button is-success mt-5 is-rounded" href="{{ url_for('create') }}">Create</a>
+                    <a id="create-button" class="button is-success mt-5 is-rounded" href="{{ url_for('create') }}">Create</a>
                 </div>
             </div>
     </section>
@@ -131,20 +131,27 @@
 
         });
 
-        token = document.cookie.split(';').find(row => row.startsWith('access_token=')).split('=')[1]
-        fetch('http://localhost/api/developers', {
+        try {
+            token = document.cookie.split(';').find(row => row.startsWith('access_token=')).split('=')[1]
+        } catch {
+            token = null
+        }
+        if(token) {
+            fetch('http://localhost/api/developers', {
                 method: 'GET',
                 headers: new Headers({
-                    'Authorization': 'Bearer ' + document.cookie.split(';').find(row => row.startsWith(
-                        'access_token=')).split('=')[1],
+                    'Authorization': 'Bearer ' + token,
                     'Content-Type': 'application/json'
                 }),
             })
             .then(function (response) {
-                return response.json();
+                if(response.status == 200) {
+                    return response.json();
+                } else {
+                    return [];
+                }
             })
             .then(function (json) {
-                dev_list = document.getElementById('');
                 json.forEach(item => {
                     let row = table.insertRow();
                     let id = row.insertCell();
@@ -175,7 +182,10 @@
                     action.appendChild(btnDel)
                 });
             });
-
+        } else {
+            document.getElementById('create-button').classList.toggle('is-hidden');
+        }
+            
     </script>
     {% if auth_token %}
     <script>
